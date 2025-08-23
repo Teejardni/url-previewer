@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 from pydantic import field_validator
 import json
-# import os
+from pathlib import Path
 
 class Settings(BaseSettings):
     PORT: int = 8000
@@ -17,14 +17,20 @@ class Settings(BaseSettings):
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
     def parse_allowed_origins(cls, value):
+        if not value:
+            return []
+        
         if isinstance(value, str):
-            # Handle comma-separated string or JSON string
-            if value.startswith("[") and value.endswith("]"):
+            # Handle JSON array
+            if value.strip().startswith("["):
                 try:
                     return json.loads(value)
                 except json.JSONDecodeError:
-                    pass
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+                    raise ValueError(f"Invalid JSON array: {value}")
+            
+            # Handle comma-separated or single value
+            return [x.strip() for x in value.split(",") if x.strip()]
+        
         return value
 
     model_config = SettingsConfigDict(

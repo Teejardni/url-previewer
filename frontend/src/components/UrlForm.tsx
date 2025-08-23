@@ -1,4 +1,5 @@
 import { useState } from "react"
+import "../App.css"
 
 interface Props {
   onSubmit: (url: string) => void
@@ -29,23 +30,37 @@ export default function UrlForm({ onSubmit, loading }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto flex gap-2">
-      <input
-        className="flex-1 border rounded-xl px-3 py-2 outline-none focus:ring-2"
-        type="url"
-        placeholder="https://example.com"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        required
-      />
+    <form onSubmit={handleSubmit} className="url-form" noValidate>
+      <div className="url-form__field">
+        <label htmlFor="url-input" className="url-form__label">
+          URL
+        </label>
+        <input
+          id="url-input"
+          className="url-form__input"
+          type="url"
+          placeholder="https://example.com"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          required
+          aria-invalid={!!error}
+          aria-describedby={error ? "url-error" : undefined}
+        />
+      </div>
+
       <button
         type="submit"
         disabled={loading}
-        className="px-4 py-2 rounded-xl border font-medium disabled:opacity-60"
+        className="url-form__button"
       >
         {loading ? "Loading..." : "Fetch Preview"}
       </button>
-      {error && <div className="text-red-600 text-sm ml-2 self-center">{error}</div>}
+
+      {error && (
+        <div id="url-error" className="url-form__error" role="alert" aria-live="polite">
+          {error}
+        </div>
+      )}
     </form>
   )
 }
