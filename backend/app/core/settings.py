@@ -1,15 +1,31 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
-
+import os
 
 class Settings(BaseSettings):
     PORT: int = 8000
     ALLOWED_ORIGINS: List[str] = ["http://localhost:5173"]
-
-    USER_AGENT: str = "URLPreviewerBot/1.0"
+    
+    USER_AGENT_TWITTERBOT: str = "Twitterbot/1.0"
+    USER_AGENT_GENERIC: str = "Mozilla/5.0 (PlayStation; PlayStation 5/6.50) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
     HTTP_TIMEOUT_SECONDS: float = 12.0
     MAX_BYTES: int = 3_145_728  # ~3 MB
+    BLOCKED_SITES_FILE: str = "blocked_sites.txt"
+    ENABLE_OTEL: bool = False  # Optional OpenTelemetry flag
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', case_sensitive=False)
+
+    @property
+    def BLOCKED_SITES(self) -> List[str]:
+        """Load blocked sites from file or return empty list if not found."""
+        try:
+            with open(self.BLOCKED_SITES_FILE, 'r', encoding='utf-8') as file:
+                return [line.strip() for line in file if line.strip()]
+        except FileNotFoundError:
+            print(f"Warning: {self.BLOCKED_SITES_FILE} not found. No sites will be treated as blocked.")
+            return []
+        except IOError as e:
+            print(f"Error reading {self.BLOCKED_SITES_FILE}: {e}")
+            return []
 
 settings = Settings()
