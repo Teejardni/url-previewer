@@ -1,22 +1,15 @@
-from pydantic import BaseModel, AnyHttpUrl, field_validator
+from pydantic import BaseModel, HttpUrl
 from typing import Optional
-from urllib.parse import urlparse
 
 class PreviewRequest(BaseModel):
-    url: AnyHttpUrl
-
-    @field_validator('url')
-    @classmethod
-    def only_http_https(cls, v: AnyHttpUrl) -> AnyHttpUrl:
-        if v.scheme not in {"http", "https"}:
-            raise ValueError("Only http/https URLs are allowed")
-        return v
+    url: HttpUrl
 
 class PreviewResponse(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    imageUrl: Optional[str] = None
-    siteName: Optional[str] = None
+    title: Optional[str]
+    description: Optional[str]
+    imageUrl: Optional[str]
+    siteName: Optional[str]
+    articleContent: Optional[str] = None  # New field for full article HTML
 
 class ErrorResponse(BaseModel):
     detail: str

@@ -72,6 +72,7 @@ async def fetch_html(url: str) -> str:
 
 async def preview_from_url(url: str) -> dict:
     html = await fetch_html(url)
-    # Process HTML before metadata extraction
     processed_html = parse.process_html_content(url, html)
-    return parse.extract_metadata(url, processed_html)
+    metadata = parse.extract_metadata(url, processed_html)
+    metadata['articleContent'] = processed_html  # Include processed HTML
+    return metadata

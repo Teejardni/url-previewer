@@ -3,6 +3,7 @@ export type PreviewResponse = {
     description: string | null
     imageUrl: string | null
     siteName: string | null
+    articleContent: string | null
   }
   
   export type ErrorResponse = { detail: string }
