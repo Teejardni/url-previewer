@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     USER_AGENT_GENERIC: str = "Mozilla/5.0 (PlayStation; PlayStation 5/6.50) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
     HTTP_TIMEOUT_SECONDS: float = 12.0
     MAX_BYTES: int = 3_145_728  # ~3 MB
-    BLOCKED_SITES_FILE: str = "blocked_sites.txt"
+    BLOCKED_SITES_FILE: str = "app/blocked_sites.txt"
     ENABLE_OTEL: bool = False
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
