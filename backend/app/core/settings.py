@@ -1,19 +1,38 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
-import os
+from pydantic import field_validator
+import json
+# import os
 
 class Settings(BaseSettings):
     PORT: int = 8000
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173"]
-    
+    ALLOWED_ORIGINS: str = ["http://localhost:5173"]
     USER_AGENT_TWITTERBOT: str = "Twitterbot/1.0"
     USER_AGENT_GENERIC: str = "Mozilla/5.0 (PlayStation; PlayStation 5/6.50) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
     HTTP_TIMEOUT_SECONDS: float = 12.0
     MAX_BYTES: int = 3_145_728  # ~3 MB
     BLOCKED_SITES_FILE: str = "blocked_sites.txt"
-    ENABLE_OTEL: bool = False  # Optional OpenTelemetry flag
+    ENABLE_OTEL: bool = False
 
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', case_sensitive=False)
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def parse_allowed_origins(cls, value):
+        if isinstance(value, str):
+            # Handle comma-separated string or JSON string
+            if value.startswith("[") and value.endswith("]"):
+                try:
+                    return json.loads(value)
+                except json.JSONDecodeError:
+                    pass
+            return [origin.strip() for origin in value.split(",") if origin.strip()]
+        return value
+
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_file_encoding='utf-8',
+        case_sensitive=False,
+        env_nested_delimiter='__'
+    )
 
     @property
     def BLOCKED_SITES(self) -> List[str]:
