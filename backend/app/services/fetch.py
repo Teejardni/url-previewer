@@ -75,4 +75,5 @@ async def preview_from_url(url: str) -> dict:
     processed_html = parse.process_html_content(url, html)
     metadata = parse.extract_metadata(url, processed_html)
     metadata['articleContent'] = processed_html  # Include processed HTML
+    # print(metadata['articleContent'])
     return metadata

@@ -6,7 +6,7 @@ import json
 
 class Settings(BaseSettings):
     PORT: int = 8000
-    ALLOWED_ORIGINS: str = ["http://localhost:5173"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173"]
     USER_AGENT_TWITTERBOT: str = "Twitterbot/1.0"
     USER_AGENT_GENERIC: str = "Mozilla/5.0 (PlayStation; PlayStation 5/6.50) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
     HTTP_TIMEOUT_SECONDS: float = 12.0
